@@ -3,13 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.fragments.StepsFragment">
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/playerView"
+    <ProgressBar
+        android:id="@+id/pb_loading_indicator3"
+        android:layout_height="42dp"
+        android:layout_width="42dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/exoplayerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </com.google.android.exoplayer2.ui.PlayerView>
+    </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
 
+    <TextView
+        android:id="@+id/descreption_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
+        android:padding="@dimen/margin_extra_large"
+        android:textSize="@dimen/text_large"/>
 </LinearLayout>
