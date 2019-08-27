@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.activities.StepsActivity"></activity>
+        <activity android:name=".ui.activities.StepsActivity"
+            android:configChanges="orientation|screenSize|layoutDirection"></activity>
         <activity android:name=".ui.activities.DetailsActivity" />
 
         <receiver android:name=".AppWidget">
