@@ -1,6 +1,7 @@
 package bakingapplication.com.ui.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,11 +10,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -58,6 +61,9 @@ public class DetailsFragment extends Fragment {
     @BindView(R.id.pb_loading_indicator2)
     ProgressBar mLoadingIndicator;
 
+
+    LinearLayout mLayout;
+
     private List<Ingredients> ingredients;
     private List<Steps> steps;
 
@@ -66,6 +72,19 @@ public class DetailsFragment extends Fragment {
     List<String> ingredientsList = new ArrayList<>() ;
     int position;
 
+    OnImageClickListener mCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mCallback = (OnImageClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnImageClickListener");
+        }
+    }
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -79,6 +98,7 @@ public class DetailsFragment extends Fragment {
         View viewRoot = inflater.inflate(R.layout.fragment_details, container, false);
         ButterKnife.bind(this,viewRoot);
 
+        mLayout = viewRoot.findViewById(R.id.android_me_linear_layout);
 
         scrollView.postDelayed(new Runnable() {
             @Override
@@ -116,8 +136,14 @@ public class DetailsFragment extends Fragment {
                     public void onClick(View view, int position) {
 
                         stepPosition = position;
-                        Intent intent = new Intent(getContext(), StepsActivity.class);
-                        startActivity(intent);
+                        if(DetailsActivity.mTwoPane == true) {
+                            mCallback.onImageSelected(position);
+                        }
+                        else {
+
+                            Intent intent = new Intent(getContext(), StepsActivity.class);
+                            startActivity(intent);
+                        }
 
                     }
 
@@ -167,4 +193,7 @@ public class DetailsFragment extends Fragment {
 
     }
 
+    public interface OnImageClickListener {
+        void onImageSelected(int position);
+    }
 }

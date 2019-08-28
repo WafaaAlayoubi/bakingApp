@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +25,7 @@ import bakingapplication.com.models.Recipe;
 import bakingapplication.com.rv.MyDividerItemDecoration;
 import bakingapplication.com.rv.RecyclerTouchListener;
 import bakingapplication.com.ui.activities.DetailsActivity;
+import bakingapplication.com.ui.activities.MainActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -46,7 +48,7 @@ public class AllRecipesFragment extends Fragment {
 
 
 
-    private List<Recipe> mRecipes;
+    public static List<Recipe> mRecipes;
     private Unbinder unbinder;
     private RecipesAdapter adapter;
 
@@ -81,6 +83,7 @@ public class AllRecipesFragment extends Fragment {
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
 
                 mLoadingIndicator.setVisibility(View.GONE);
+
                 generateDataList(response.body());
             }
 
@@ -114,10 +117,21 @@ public class AllRecipesFragment extends Fragment {
     }
 
     private void generateDataList(List<Recipe> recipeList) {
-        adapter = new RecipesAdapter(getActivity(),recipeList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecipesRecyclerView.setLayoutManager(layoutManager);
-        mRecipesRecyclerView.setAdapter(adapter);
+
+        mRecipes = recipeList;
+
+        if (MainActivity.mTwoPaneMain == false) {
+            adapter = new RecipesAdapter(getActivity(), recipeList);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            mRecipesRecyclerView.setLayoutManager(layoutManager);
+            mRecipesRecyclerView.setAdapter(adapter);
+        }
+        else {
+            adapter = new RecipesAdapter(getActivity(), recipeList);
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+            mRecipesRecyclerView.setLayoutManager(layoutManager);
+            mRecipesRecyclerView.setAdapter(adapter);
+        }
     }
 
 
