@@ -3,6 +3,7 @@ package bakingapplication.com.widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,45 +30,37 @@ public class AppWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context ctxt, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
+        ComponentName component;
         for (int i=0; i<appWidgetIds.length; i++) {
-            Intent svcIntent=new Intent(ctxt, AppWidgetService.class);
 
-            svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
-          //  svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
+            RemoteViews remoteViews = updateWidgetListView(ctxt,
+                    appWidgetIds[i]);
+            appWidgetManager.updateAppWidget(appWidgetIds[i], remoteViews);
 
+            component=new ComponentName(ctxt,AppWidget.class);
+            appWidgetManager.updateAppWidget(component, remoteViews);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_listview);
 
-
-            RemoteViews widget=new RemoteViews(ctxt.getPackageName(),
-                    R.layout.app_widget);
-
-
-            LoremViewsFactory.items = DetailsActivity.ingredientsList2.toArray(new String[0]);
-            PendingIntent pendingIntent = PendingIntent.getActivity(ctxt, 0, new Intent(ctxt, MainActivity.class), 0);
-
-
-            widget.setTextViewText(R.id.recipe_widget_name_text, name);
-            widget.setOnClickPendingIntent(R.id.recipe_widget_name_text, pendingIntent);
-
-            widget.setRemoteAdapter(appWidgetIds[i], R.id.recipe_widget_listview,
-                    svcIntent);
-
-            Intent clickIntent=new Intent(ctxt, DetailsActivity.class);
-            PendingIntent clickPI=PendingIntent
-                    .getActivity(ctxt, 0,
-                            clickIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-            // Initialize the list view
-            Intent intent = new Intent(ctxt, AppWidgetService.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
-            // Bind the remote adapter
-            widget.setRemoteAdapter(R.id.recipe_widget_listview, intent);
-
-            widget.setPendingIntentTemplate(R.id.recipe_widget_listview, clickPI);
-
-            appWidgetManager.updateAppWidget(appWidgetIds[i], widget);
         }
 
         super.onUpdate(ctxt, appWidgetManager, appWidgetIds);
+    }
+
+    private RemoteViews updateWidgetListView(Context context, int appWidgetId) {
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
+
+        remoteViews.setTextViewText(R.id.recipe_widget_name_text, name);
+        remoteViews.setOnClickPendingIntent(R.id.recipe_widget_name_text, pendingIntent);
+
+
+        Intent svcIntent = new Intent(context, AppWidgetService.class);
+        svcIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        svcIntent.setData(Uri.parse(svcIntent.toUri(Intent.URI_INTENT_SCHEME)));
+        remoteViews.setRemoteAdapter(R.id.widget_listview, svcIntent);
+
+        return remoteViews;
     }
 
     @Override
@@ -75,4 +68,3 @@ public class AppWidget extends AppWidgetProvider {
         super.onReceive(context, intent);
     }
 }
-

@@ -37,7 +37,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsFragmen
 
     public static boolean mTwoPane;
     Recipe mRecipe;
-   public static List<String> ingredientsList2 = new ArrayList<>() ;
+    public static List<String> ingredientsList2 = new ArrayList<>() ;
     private List<Ingredients> ingredients;
 
     public static ArrayAdapter<String> adapterWidget;
@@ -95,18 +95,21 @@ public class DetailsActivity extends AppCompatActivity implements DetailsFragmen
             AppWidget.name = mRecipe.getName();
             String ingredientsElement;
 
+            ingredientsList2.clear();
+
             for (int i =0; i<ingredients.size();i++){
                 ingredientsObj = ingredients.get(i);
                 ingredientsElement = ingredientsObj.getIngredient() + "(" +ingredientsObj.getQuantity()+ingredientsObj.getMeasure()+")";
                 ingredientsList2.add(ingredientsElement);
             }
 
+
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
             int [] appWidgetIds =appWidgetManager.getAppWidgetIds(new ComponentName(this,AppWidget.class));
 
-             adapterWidget = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, ingredientsList2);
-            listView = findViewById(R.id.recipe_widget_listview);
+//            adapterWidget = new ArrayAdapter<>(this,
+//                    android.R.layout.simple_list_item_1, ingredientsList2);
+//            listView = findViewById(R.id.widget_listview);
 
 
             AppWidget appWidget = new AppWidget();

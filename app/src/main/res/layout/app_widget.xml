@@ -15,7 +15,7 @@
         android:textSize="@dimen/text_extra_large" />
 
     <ListView
-        android:id="@+id/recipe_widget_listview"
+        android:id="@+id/widget_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/margin_medium"

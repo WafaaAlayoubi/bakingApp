@@ -7,6 +7,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import bakingapplication.com.R;
+import bakingapplication.com.ui.activities.DetailsActivity;
 
 public class LoremViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public static String[] items={"lorem", "ipsum", "dolor",
@@ -42,7 +43,7 @@ public class LoremViewsFactory implements RemoteViewsService.RemoteViewsFactory 
 
     @Override
     public int getCount() {
-        return(items.length);
+        return(1);
     }
 
     @Override
@@ -50,7 +51,13 @@ public class LoremViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         RemoteViews row=new RemoteViews(ctxt.getPackageName(),
                 R.layout.row);
 
-        row.setTextViewText(android.R.id.text1, items[position]);
+        String ans = "";
+
+        for (String list1 : DetailsActivity.ingredientsList2) {
+            ans = ans + list1 + "\n\n\n";
+        }
+
+        row.setTextViewText(android.R.id.text1, ans);
 
         Intent i=new Intent();
         Bundle extras=new Bundle();

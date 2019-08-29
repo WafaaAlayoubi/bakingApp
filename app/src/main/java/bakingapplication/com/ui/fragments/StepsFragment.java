@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
@@ -88,6 +89,8 @@ public class StepsFragment extends Fragment implements View.OnClickListener, Exo
     int stepsPosition;
 
     String videourl = "https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4";
+
+    String thumbnailURL = "";
 
     public StepsFragment() {
         // Required empty public constructor
@@ -165,19 +168,28 @@ public class StepsFragment extends Fragment implements View.OnClickListener, Exo
         steps = recipeList.get(recipePosition).getSteps();
 
         videourl = steps.get(stepsPosition).getVideoURL();
+        thumbnailURL = steps.get(stepsPosition).getThumbnailURL();
 
         mDescreptionTv.setText(steps.get(stepsPosition).getDescription());
 
-        if (videourl.equals("")){
+        if (videourl.equals("") && thumbnailURL.equals("") ){
             exoPlayerView.setVisibility(View.GONE);
         }
+        
         else {
             exoPlayerView.setVisibility(View.VISIBLE);
             try {
                 BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
                 TrackSelector trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(bandwidthMeter));
                 mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
-                Uri videouri = Uri.parse(videourl);
+                Uri videouri = null;
+                if (thumbnailURL.equals("")) {
+                     videouri = Uri.parse(videourl);
+                }
+                else if (videourl.equals("")){
+                     videouri = Uri.parse(thumbnailURL);
+
+                }
                 DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
                 ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
                 MediaSource mediaSource = new ExtractorMediaSource(videouri, dataSourceFactory, extractorsFactory, null, null);
@@ -278,9 +290,38 @@ public class StepsFragment extends Fragment implements View.OnClickListener, Exo
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(!videourl.equals("")) {
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializeMediaSession();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+            initializeMediaSession();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
             releasePlayer();
-            mMediaSession.setActive(false);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
         }
     }
 
@@ -288,7 +329,6 @@ public class StepsFragment extends Fragment implements View.OnClickListener, Exo
 
         if(!videourl.equals("")){
 
-            mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
 

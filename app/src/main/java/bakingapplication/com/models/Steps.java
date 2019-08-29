@@ -21,11 +21,24 @@ public class Steps {
     @Expose
     private String videoURL;
 
-    public Steps(String id, String shortDescription, String description, String videoURL) {
+    @SerializedName("thumbnailURL")
+    @Expose
+    private String thumbnailURL;
+
+    public Steps(String id, String shortDescription, String description, String videoURL, String thumbnailURL) {
         this.id = id;
         this.shortDescription = shortDescription;
         this.description = description;
         this.videoURL = videoURL;
+        this.thumbnailURL = thumbnailURL;
+    }
+
+    public String getThumbnailURL() {
+        return thumbnailURL;
+    }
+
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
     }
 
     public String getId() {
